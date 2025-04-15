@@ -1,4 +1,4 @@
-namespace CardCatalog
+namespace CardCatalog.Interface
 {
     public interface ICardCatalogRepository
     {

@@ -1,10 +1,11 @@
+using CardCatalog.Interface;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CardCatalog
+namespace CardCatalog.Core
 {
     [Route("api/cards")]
     [ApiController]
-    public class CatalogController(ICardCatalogRepository cardCatalogRepository) : ControllerBase
+    public class CatalogController(ICardCatalogRepository cardCatalogRepository, ICardCatalogService cardCatalogService) : ControllerBase
     {
         [HttpGet("catalog")]
         public async Task<IActionResult> GetCatalog()
@@ -46,16 +47,15 @@ namespace CardCatalog
         [HttpPost("deck")]
         public async Task<IActionResult> GetSelectedCards([FromBody] SelectedCardsRequest request)
         {
-            List<string> invalidGuids = [];
-            List<Guid> validGuids = [];
-            request.CardIds.ForEach(id =>
+            try
             {
-                var parse = Guid.TryParse(id, out var validGuid);
-                if (!parse) invalidGuids.Add(id);
-                else validGuids.Add(validGuid);
-            });
-
-            var cards = await cardCatalogRepository.FindCards(validGuids);
+                var response = await cardCatalogService.SelectedCards(request);
+                return Ok(response);
+            }
+            catch (System.Exception)
+            {
+                return StatusCode(500, "Unexpected Error has occured");
+            }
         }
     }
 }

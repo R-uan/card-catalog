@@ -1,6 +1,7 @@
 using CardCatalog;
-using MongoDB.Bson;
 using MongoDB.Driver;
+using CardCatalog.Core;
+using CardCatalog.Interface;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
@@ -14,6 +15,7 @@ var database = client.GetDatabase(mongoSettings.Database);
 var cardCollection = database.GetCollection<Card>("cards");
 
 builder.Services.AddSingleton<IMongoCollection<Card>>(cardCollection);
+builder.Services.AddScoped<ICardCatalogService, CardCatalogService>();
 builder.Services.AddScoped<ICardCatalogRepository, CardCollectionRepository>();
 
 var app = builder.Build();
